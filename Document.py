@@ -30,6 +30,7 @@ class Document:
             if DocumentID == 0 :
                     #create Document
                     self.DocumentID = 0
+                    #TODO create document API Call
             else:
                     self.DocumentID = DocumentID
 
