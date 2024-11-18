@@ -1,0 +1,75 @@
+# Node modules
+node_modules/
+ 
+# Build output
+build/
+dist/
+
+# Dependencies
+package-lock.json
+yarn.lock
+
+# Local environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.suo
+.ntvs
+*.njsproj
+*.sln
+.DS_Store
+
+# System files
+Thumbs.db
+.DS_Store
+
+# Mac system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux system files
+.Trash-*/
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Cache files
+.cache/
+.parcel-cache/
+*.tgz
+.pnpm-debug.log*
+
+# Testing
+/coverage/
+*.lcov
+jest.cache/
+jest-test-results.json
+
+# Storybook files
+storybook-static/
+.out/
+.storybook/
+
+# Next.js
+.next/
+out/
