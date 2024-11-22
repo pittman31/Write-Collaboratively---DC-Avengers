@@ -1,3 +1,4 @@
+
 import boto3
 
 #textract client initialization
