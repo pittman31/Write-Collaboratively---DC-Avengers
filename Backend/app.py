@@ -7,7 +7,7 @@ from endpoints import upload_to_s3 as s3_upload
 
 
 app = Flask(__name__)#Flask application and  enabling cors
-CORS(app)
+CORS(app,origins=["http://localhost:3000"])
 
 @app.route('/upload_image', methods=['Post'])#upload image notes route
 def upload_image():
@@ -35,7 +35,12 @@ def upload_image():
     
 @app.route('/get_document', methods=['Post'])
 def get_document():
-    pass
+    request_data= request.get_json()  
+    id = request_data.get('id')
+    print("id",id)
+    return {'status': 'success',
+            'content':" updated data example content"}
+
 
 
 @app.route('/update_document', methods=['Post'])
