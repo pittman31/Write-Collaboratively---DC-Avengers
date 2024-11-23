@@ -16,9 +16,11 @@ from googleapiclient.errors import HttpError
 DOCUMENT_ID = "109zpwgU7kLhW5EeLEGcaunTgS0wwOLdufQINBhSqOSY"
 
 def setupCredentials():
-	""" Description
+	""" Description: 
 	Setup user authentication
+
 	:raises:
+	
 	:rtype:
 	:returns:
 	User Authentication Credentials
@@ -48,16 +50,24 @@ def setupCredentials():
 	return creds
 
 def buildServices(creds):
-	""" Description
+	""" Description: 
 	Builds the API Services
+
 	:type creds:
 	:param creds:
+
 	:raises:
+	HttpError
+
 	:rtype:
 	:returns:
 	API Service Objects
 	"""
-	driveService = build("drive", "v3", credentials=creds)
-	docsService =  build("docs", "v1", credentials=creds)
+
+	try:
+		driveService = build("drive", "v3", credentials=creds)
+		docsService =  build("docs", "v1", credentials=creds)
+	except HttpError as err:
+		print(err)
 
 	return driveService, docsService
