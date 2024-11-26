@@ -4,6 +4,7 @@ import './App.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Login from './components/Login';
 import ImageUpload from './components/ImageUpload';
+import EditData from './components/EditData';
 
 function App() {
     return (
@@ -12,6 +13,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/upload" element={<ImageUpload />} />
+            <Route path="/edit/:id" element={<EditData />} />
           </Routes>
         </BrowserRouter>
       </GoogleOAuthProvider>
