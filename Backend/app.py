@@ -1,4 +1,3 @@
-import json
 from flask_cors import CORS
 from flask import Flask,request
 from endpoints import text_extraction as text_extraction
@@ -44,21 +43,18 @@ def upload_image():
 def get_document():
 
     #get the latest document updates
-    myDocument.getDocumentUpdates()
+    globals()['myDocument'].getDocumentUpdates()
 
     #Export Document as text
-    documentText = myDocument.exportDocumentAsTxt()
+    documentText = globals()['myDocument'].exportDocumentAsTxt()
 
-    #request_data= request.get_json()  
-    #id = request_data.get('id')
-    #print("id",id)
     return {
         'status': 'success',
         'content': documentText
         }
 
 
-
+[]
 @app.route('/update_document', methods=['Post'])
 def update_document():
     pass
@@ -74,16 +70,11 @@ def google_login():
     driveService, docsService = GoogleHelperFunctions.buildServices(creds)
 
     #Instantiate the document object
-    globals()['myDocument'] = Document.Document(GoogleHelperFunctions.DOCUMENT_ID, driveService, docsService, creds)
+    globals()['myDocument'] = Document.Document(GoogleHelperFunctions.DOCUMENT_ID, creds)
 
-    if(1):
-        return {
-         'status': 'success',
-        }
-    else:
-        return {
-        'status': 'failed'
-        }
+    return {
+        'status': 'success',
+    }
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
