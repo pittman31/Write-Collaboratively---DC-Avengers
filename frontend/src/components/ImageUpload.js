@@ -1,7 +1,6 @@
 
 import wallpaper from "../assets/wallpaper.jpg"
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -21,29 +20,16 @@ const ImageUpload = () => {
   const [notes_title, setNotesTitle] = useState('');
   const changePage = useNavigate();
 
-  useEffect(() => {
-    console.log("p1", preview);
-    clearform(null);
-    console.log("p2", preview);
-
-  }, [])
-
   const onHomeClick = () => {
     changePage('/home')
   }
 
   const onNotesImageChange = (event) => {
-    const uploaded_image = event.target.files[0];
-    setNotesImages(uploaded_image);
+    const uploaded_images = Array.from(event.target.files);
+    setNotesImages((previousImages) => [...previousImages, ...uploaded_images]);
 
-    if (uploaded_image) {
-      const imagesPreviews = URL.createObjectURL(uploaded_image);
-      setImagePreview(imagesPreviews);
-    }
-    else {
-      setImagePreview()
-
-    }
+    const imagesPreviews = uploaded_images.map((image_file) => URL.createObjectURL(image_file));
+    setImagePreview((previousImagesPreviews) => [...previousImagesPreviews, ...imagesPreviews]);
   };
 
   const onNotesTitleChange = (e) => {
@@ -54,34 +40,13 @@ const ImageUpload = () => {
   const onFormSubmit = (event) => {
     event.preventDefault();
     const data = new FormData();
-    data.append('docTitle', notes_title);
-    data.append('imagefile', notes_images);
-
-    console.log('Submitted Data:', data.getAll('docTitle'), data.getAll('imagefile'));
-
-    axios.post("http://127.0.0.1:5000/upload_image", data)
-
-      .then(response => {
-
-        console.log('POST Request Response:', response);
-        if (response['data']['status'] == 'success') {
-
-
-          changePage("/Home")
-        }
-
-      })
-      .catch(error => {
-        console.error('Error:', error)
-
-      });
-
+    data.append('formTitle', notes_title);
+    notes_images.forEach((image_file, index) => {
+      data.append('uploadedImages[]', image_file);
+    });
+    console.log('Submitted Data:', data.getAll('formTitle'), data.getAll('uploadedImages[]'));
     clearform();
-
-
-
   };
-
 
   const clearform = () => {
     setNotesImages([]);
@@ -151,38 +116,53 @@ const ImageUpload = () => {
           Upload Image
         </Typography>
         <form onSubmit={onFormSubmit}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <TextField
-              label="Title"
-              required
-              value={notes_title}
-              fullWidth
-              margin="normal"
-              onChange={onNotesTitleChange}
+          <TextField
+            label="Title"
+            required
+            value={notes_title}
+            fullWidth
+            margin="normal"
+            onChange={onNotesTitleChange}
+          />
+
+          <Button
+            variant="contained"
+            component="label"
+            sx={{ marginLeft: "19vh", marginTop: "1rem", borderRadius: "3vh" }}>
+            Browse Image
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              hidden
+              onChange={onNotesImageChange}
             />
+          </Button>
+
+          <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={2}>
+            {preview.map((image_file, index) => (
+              <Box item xs={5} sm={4} key={index}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="100"
+                    image={image_file}
+                    alt={`previewImage ${index}`}
+                  />
+
+                </Card>
+              </Box>
+            ))}
+          </Box>
+
+          <Card sx={{ display: 'flex', justifyContent: 'space-between', marginTop: "3rem" }}>
             <Button
               type="submit"
               variant="contained"
-              sx={{ borderRadius: "1vh", height: "3rem", marginTop: "1.25rem", marginLeft: "1rem" }}
+              sx={{ borderRadius: "3vh" }}
               color="primary"
             >
               Submit
-            </Button>
-
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Button
-              variant="contained"
-              component="label"
-              sx={{ marginTop: "1rem", borderRadius: "3vh" }}>
-              Browse Image
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                hidden
-                onChange={onNotesImageChange}
-              />
             </Button>
             <Button
               variant="contained"
