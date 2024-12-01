@@ -1,5 +1,7 @@
+
 import wallpaper from "../assets/wallpaper.jpg"
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
+import axios from 'axios';
 import {
   Box,
   Button,
@@ -11,45 +13,80 @@ import {
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 
+
+
 const ImageUpload = () => {
-  const [notes_images, setNotesImages] = useState([]);
-  const [preview, setImagePreview] = useState([]);
+  const [notes_images, setNotesImages] = useState(null);
+  const [preview, setImagePreview] = useState(null);
   const [notes_title, setNotesTitle] = useState('');
   const changePage = useNavigate();
+
+  useEffect(() => {
+    console.log("p1",preview);
+    clearform(null);
+    console.log("p2",preview);
+  
+  }, [])
 
   const onHomeClick = () => {
     changePage('/home')
   }
 
   const onNotesImageChange = (event) => {
-    const uploaded_images = Array.from(event.target.files);
-    setNotesImages((previousImages) => [...previousImages, ...uploaded_images]);
+    const uploaded_image = event.target.files[0];
+    setNotesImages(uploaded_image);
 
-    const imagesPreviews = uploaded_images.map((image_file) => URL.createObjectURL(image_file));
-    setImagePreview((previousImagesPreviews) => [...previousImagesPreviews, ...imagesPreviews]);
-  };
+    if(uploaded_image){
+    const imagesPreviews = URL.createObjectURL(uploaded_image);
+    setImagePreview(imagesPreviews);
+  }
+  else{
+    setImagePreview()
+
+  }
+};
 
   const onNotesTitleChange = (e) => {
     console.log("title changed", e.target.value)
     setNotesTitle(e.target.value);
   };
 
-  const onFormSubmit = async (e) => {
-    e.preventDefault();
-
+  const onFormSubmit = (event) => {
+    event.preventDefault();
     const data = new FormData();
-    data.append('formTitle', notes_title);
-    notes_images.forEach((image_file, index) => {
-      data.append('uploadedImages[]', image_file);
-    });
-    console.log('Submitted Data:', data.getAll('formTitle'), data.getAll('uploadedImages[]'));
-    clearform();
-  };
+    data.append('docTitle', notes_title);
+    data.append('imagefile', notes_images);
+   
+    console.log('Submitted Data:', data.getAll('docTitle'), data.getAll('imagefile'));
+
+    axios.post("http://127.0.0.1:5000/upload_image", data)
+
+        .then(response => {
+            
+            console.log('POST Request Response:', response);
+            if (response['data']['status'] == 'success') {
+
+                
+                changePage("/Home")
+            }
+            
+        })
+        .catch(error => {
+            console.error('Error:', error)
+          
+        });
+
+        clearform();
+
+
+
+};
+  
 
   const clearform = () => {
     setNotesImages([]);
     setNotesTitle('');
-    setImagePreview([]);
+    setImagePreview(null);
   };
 
   return <div style={{
@@ -139,21 +176,22 @@ const ImageUpload = () => {
             />
           </Button>
 
-          <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={2}>
-            {preview.map((image_file, index) => (
-              <Box item xs={5} sm={4} key={index}>
-                <Card>
-                  <CardMedia
-                    component="img"
-                    height="100"
-                    image={image_file}
-                    alt={`previewImage ${index}`}
-                  />
 
-                </Card>
-              </Box>
-            ))}
-          </Box>
+          {preview && (
+            <Box marginTop='2rem'>
+              <Card>
+                <CardMedia
+                  component="img"
+                  height="100"
+                  image={preview}
+                  alt="preview"
+                />
+              </Card>
+            </Box>
+              )}
+              
+    
+        
 
           <Card sx={{ display: 'flex', justifyContent: 'space-between', marginTop: "3rem" }}>
             <Button
