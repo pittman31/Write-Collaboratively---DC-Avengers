@@ -8,6 +8,11 @@ import user_icon from "../assets/user.png"
 const Login = () => {
     const navigate_route = useNavigate();
 
+    const onButtonClick = () => {
+        console.log('function called');
+        navigate_route('/home')
+    };
+
     return (
 
         <div style={{
@@ -41,7 +46,12 @@ const Login = () => {
                     style={{ width: '80px', height: '80px', marginBottom: "1vh" }}
                 />
 
-                <GoogleLogin
+                {/* This is new button nmed login and when it gets clicked will call onButtonClick function, backend call to define in that*/}
+                <Button variant="contained" color="primary" onClick={onButtonClick}>
+                Login
+                </Button>
+
+                {/*<GoogleLogin
                     onSuccess={(response) => {
                         navigate_route('/home');
                     }}
@@ -49,6 +59,7 @@ const Login = () => {
                         console.error('Login Failed', error);
                     }}
                 />
+                */}
             </div>
         </div>
     );
