@@ -1,5 +1,7 @@
+
 import wallpaper from "../assets/wallpaper.jpg"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import {
   Box,
   Button,
@@ -11,22 +13,37 @@ import {
 import HomeIcon from '@mui/icons-material/Home';
 import { useNavigate } from 'react-router-dom';
 
+
+
 const ImageUpload = () => {
-  const [notes_images, setNotesImages] = useState([]);
-  const [preview, setImagePreview] = useState([]);
+  const [notes_images, setNotesImages] = useState(null);
+  const [preview, setImagePreview] = useState(null);
   const [notes_title, setNotesTitle] = useState('');
   const changePage = useNavigate();
+
+  useEffect(() => {
+    console.log("p1", preview);
+    clearform(null);
+    console.log("p2", preview);
+
+  }, [])
 
   const onHomeClick = () => {
     changePage('/home')
   }
 
   const onNotesImageChange = (event) => {
-    const uploaded_images = Array.from(event.target.files);
-    setNotesImages((previousImages) => [...previousImages, ...uploaded_images]);
+    const uploaded_image = event.target.files[0];
+    setNotesImages(uploaded_image);
 
-    const imagesPreviews = uploaded_images.map((image_file) => URL.createObjectURL(image_file));
-    setImagePreview((previousImagesPreviews) => [...previousImagesPreviews, ...imagesPreviews]);
+    if (uploaded_image) {
+      const imagesPreviews = URL.createObjectURL(uploaded_image);
+      setImagePreview(imagesPreviews);
+    }
+    else {
+      setImagePreview()
+
+    }
   };
 
   const onNotesTitleChange = (e) => {
@@ -34,22 +51,42 @@ const ImageUpload = () => {
     setNotesTitle(e.target.value);
   };
 
-  const onFormSubmit = async (e) => {
-    e.preventDefault();
-
+  const onFormSubmit = (event) => {
+    event.preventDefault();
     const data = new FormData();
-    data.append('formTitle', notes_title);
-    notes_images.forEach((image_file, index) => {
-      data.append('uploadedImages[]', image_file);
-    });
-    console.log('Submitted Data:', data.getAll('formTitle'), data.getAll('uploadedImages[]'));
+    data.append('docTitle', notes_title);
+    data.append('imagefile', notes_images);
+
+    console.log('Submitted Data:', data.getAll('docTitle'), data.getAll('imagefile'));
+
+    axios.post("http://127.0.0.1:5000/upload_image", data)
+
+      .then(response => {
+
+        console.log('POST Request Response:', response);
+        if (response['data']['status'] == 'success') {
+
+
+          changePage("/Home")
+        }
+
+      })
+      .catch(error => {
+        console.error('Error:', error)
+
+      });
+
     clearform();
+
+
+
   };
+
 
   const clearform = () => {
     setNotesImages([]);
     setNotesTitle('');
-    setImagePreview([]);
+    setImagePreview(null);
   };
 
   return <div style={{
@@ -95,19 +132,17 @@ const ImageUpload = () => {
     <div>
       <Box
         sx={{
-          minWidth: 300,
+          minWidth: 500,
           marginLeft: "auto",
           marginRight: "auto",
-          maxWidth: 480,
+          maxWidth: 700,
           backgroundColor: '#fafafa',
           borderRadius: "2vh",
           backgroundColor: 'white',
-          marginTop: "2rem",
           padding: "2rem",
           opacity: 0.8,
 
         }} >
-
         <Typography variant="h4" align="center" sx={{
           letterSpacing: 2,
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
@@ -116,66 +151,64 @@ const ImageUpload = () => {
           Upload Image
         </Typography>
         <form onSubmit={onFormSubmit}>
-          <TextField
-            label="Title"
-            required
-            value={notes_title}
-            fullWidth
-            margin="normal"
-            onChange={onNotesTitleChange}
-          />
-
-          <Button
-            variant="contained"
-            component="label"
-            sx={{ marginLeft: "19vh", marginTop: "1rem", borderRadius: "3vh" }}>
-            Browse Image
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              hidden
-              onChange={onNotesImageChange}
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <TextField
+              label="Title"
+              required
+              value={notes_title}
+              fullWidth
+              margin="normal"
+              onChange={onNotesTitleChange}
             />
-          </Button>
-
-          <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={2}>
-            {preview.map((image_file, index) => (
-              <Box item xs={5} sm={4} key={index}>
-                <Card>
-                  <CardMedia
-                    component="img"
-                    height="100"
-                    image={image_file}
-                    alt={`previewImage ${index}`}
-                  />
-
-                </Card>
-              </Box>
-            ))}
-          </Box>
-
-          <Card sx={{ display: 'flex', justifyContent: 'space-between', marginTop: "3rem" }}>
             <Button
               type="submit"
               variant="contained"
-              sx={{ borderRadius: "3vh" }}
+              sx={{ borderRadius: "1vh", height: "3rem", marginTop: "1.25rem", marginLeft: "1rem" }}
               color="primary"
             >
               Submit
             </Button>
+
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <Button
               variant="contained"
-              sx={{ borderRadius: "3vh" }}
+              component="label"
+              sx={{ marginTop: "1rem", borderRadius: "3vh" }}>
+              Browse Image
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                onChange={onNotesImageChange}
+              />
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ borderRadius: "1vh", marginTop: "1rem" }}
               onClick={clearform}
             >
               Clear
             </Button>
-          </Card>
+          </div>
+
+          {preview && (
+            <Box marginTop='2rem'>
+              <Card>
+                <CardMedia
+                  component="img"
+                  height="100"
+                  image={preview}
+                  alt="preview"
+                />
+              </Card>
+            </Box>
+          )}
+
         </form>
       </Box>
     </div>
-
   </div>
 };
 
