@@ -164,6 +164,8 @@ class Document:
 			fileText = file.read()
 		print(fileText)
 
+		return fileText
+
 		
 
 

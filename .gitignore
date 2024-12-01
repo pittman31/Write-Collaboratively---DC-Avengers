@@ -8,3 +8,15 @@ output.pdf
 output.txt
 main.py
 main.py
+backend/endpoints/__pycache__/text_extraction.cpython-312.pyc
+backend/endpoints/__pycache__/upload_to_s3.cpython-312.pyc
+*.pyc
+*.pyc
+backend/endpoints/__pycache__/upload_to_s3.cpython-312.pyc
+*.pyc
+*.pyc
+main.py
+/node_modules
+main.py
+package-lock.json
+package.json

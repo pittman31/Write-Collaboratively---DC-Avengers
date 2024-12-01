@@ -4,13 +4,26 @@ import { GoogleLogin } from '@react-oauth/google';
 import { Typography, Button, } from '@mui/material';
 import wallpaper from "../assets/wallpaper.jpg"
 import user_icon from "../assets/user.png"
+import axios from 'axios';
 
 const Login = () => {
     const navigate_route = useNavigate();
 
     const onButtonClick = () => {
         console.log('function called');
-        navigate_route('/home')
+        axios.get("http://127.0.0.1:5000/google_login")
+
+            .then(response => {
+                
+                console.log('GET Request Response:', response);
+                navigate_route('/home')
+                
+            })
+            .catch(error => {
+
+                console.error('Error:', error)
+            
+            });
     };
 
     return (
