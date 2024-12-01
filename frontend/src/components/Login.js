@@ -8,7 +8,6 @@ import axios from 'axios';
 
 const Login = () => {
     const navigate_route = useNavigate();
-
     const onButtonClick = () => {
         console.log('function called');
         axios.get("http://127.0.0.1:5000/google_login")

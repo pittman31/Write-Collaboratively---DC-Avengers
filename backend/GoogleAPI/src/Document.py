@@ -4,10 +4,10 @@ Document.py:
     Class for a Document. Functions for creating, editing, and updating a Document
 """
 import io
-
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaIoBaseDownload
+from GoogleAPI.src import GoogleHelperFunctions
 
 class Document:
 	
@@ -19,11 +19,9 @@ class Document:
 	docID = None  #Google Doc Document ID
 	documentContent = None #Document content from the Google Docs API response
 	creds = None    #User Credentials
-	docsService = None      #Docs Service
-	driveService = None		#Drive Service
 
 
-	def __init__(self, docID, driveService, docsService, creds):
+	def __init__(self, docID, creds):
 		""" Description:
 		Document class Constructor
 
@@ -32,12 +30,6 @@ class Document:
 
 		:type docID:
 		:param docID:
-
-		:type driveService:
-		:param driveService:
-
-		:type docsService:
-		:param docsService:
 
 		:type creds:
 		:param creds:
@@ -49,9 +41,7 @@ class Document:
 		"""
 		#Update Member Variables
 		self.docID = docID
-		self.docsService = docsService
 		self.creds = creds
-		self.driveService = driveService
 
 		#Get Document content to store in a member variable
 		self.getDocumentUpdates()
@@ -82,6 +72,9 @@ class Document:
 
 		try:
 
+			#Build Google Services
+			driveService, docsService = GoogleHelperFunctions.buildServices(self.creds)
+
 			#Get the latest Document updates
 			self.getDocumentUpdates()
 			
@@ -107,7 +100,7 @@ class Document:
 			]
 
 			#Update Document body text
-			result = self.docsService.documents().batchUpdate(documentId=self.docID, body={'requests': requests}).execute()
+			result = docsService.documents().batchUpdate(documentId=self.docID, body={'requests': requests}).execute()
 		
 			#Print the title and contents of the documnet
 			#print(f"The title of the document is: {document.get('title')}")
@@ -139,10 +132,14 @@ class Document:
 	
 	def exportDocumentAsTxt(self):
 		
+		#Build Google Services
+		driveService, docsService = GoogleHelperFunctions.buildServices(self.creds)
+
+
 		#Download the document in byte format
 		try:
 			fileFormat = "text/plain"
-			request = self.driveService.files().export_media(fileId=self.docID, mimeType=fileFormat)
+			request = driveService.files().export_media(fileId=self.docID, mimeType=fileFormat)
 
 			fileInBytes = io.BytesIO()
 			downloader = MediaIoBaseDownload(fileInBytes, request)
@@ -162,7 +159,9 @@ class Document:
 		#Read Contents of a text file as a String
 		with open("documentText.txt", "r", encoding='utf-8-sig') as file:
 			fileText = file.read()
-		print(fileText)
+
+		#Print Document Contents
+		print("Document Contents:" + fileText)
 
 		return fileText
 
@@ -186,9 +185,12 @@ class Document:
 			:returns:
 			isSuccessful
 			"""
+			#Build Google Services
+			driveService, docsService = GoogleHelperFunctions.buildServices(self.creds)
+
 			try:
 				#API call to get document updates
-				self.documentContent = self.docsService.documents().get(documentId=self.docID, ).execute()
+				self.documentContent = docsService.documents().get(documentId=self.docID, ).execute()
 				isSuccessful = True
 
 			except HttpError as err:
