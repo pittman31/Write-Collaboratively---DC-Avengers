@@ -15,7 +15,7 @@ const Login = () => {
             .then(response => {
                 
                 console.log('GET Request Response:', response);
-                navigate_route('/Home')
+                navigate_route('/home')
                 
             })
             .catch(error => {
