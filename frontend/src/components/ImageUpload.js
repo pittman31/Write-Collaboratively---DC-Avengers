@@ -59,7 +59,7 @@ const ImageUpload = () => {
 
     console.log('Submitted Data:', data.getAll('docTitle'), data.getAll('imagefile'));
 
-    axios.post("http://127.0.0.1:5000/upload_image", data)
+    axios.post("http://34.207.119.163:5000/upload_image", data)
 
       .then(response => {
 
