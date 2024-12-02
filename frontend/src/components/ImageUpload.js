@@ -1,6 +1,6 @@
 
 import wallpaper from "../assets/wallpaper.jpg"
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -22,10 +22,10 @@ const ImageUpload = () => {
   const changePage = useNavigate();
 
   useEffect(() => {
-    console.log("p1",preview);
+    console.log("p1", preview);
     clearform(null);
-    console.log("p2",preview);
-  
+    console.log("p2", preview);
+
   }, [])
 
   const onHomeClick = () => {
@@ -36,15 +36,15 @@ const ImageUpload = () => {
     const uploaded_image = event.target.files[0];
     setNotesImages(uploaded_image);
 
-    if(uploaded_image){
-    const imagesPreviews = URL.createObjectURL(uploaded_image);
-    setImagePreview(imagesPreviews);
-  }
-  else{
-    setImagePreview()
+    if (uploaded_image) {
+      const imagesPreviews = URL.createObjectURL(uploaded_image);
+      setImagePreview(imagesPreviews);
+    }
+    else {
+      setImagePreview()
 
-  }
-};
+    }
+  };
 
   const onNotesTitleChange = (e) => {
     console.log("title changed", e.target.value)
@@ -56,32 +56,32 @@ const ImageUpload = () => {
     const data = new FormData();
     data.append('docTitle', notes_title);
     data.append('imagefile', notes_images);
-   
+
     console.log('Submitted Data:', data.getAll('docTitle'), data.getAll('imagefile'));
 
     axios.post("http://127.0.0.1:5000/upload_image", data)
 
-        .then(response => {
-            
-            console.log('POST Request Response:', response);
-            if (response['data']['status'] == 'success') {
+      .then(response => {
 
-                
-                changePage("/Home")
-            }
-            
-        })
-        .catch(error => {
-            console.error('Error:', error)
-          
-        });
-
-        clearform();
+        console.log('POST Request Response:', response);
+        if (response['data']['status'] == 'success') {
 
 
+          changePage("/Home")
+        }
 
-};
-  
+      })
+      .catch(error => {
+        console.error('Error:', error)
+
+      });
+
+    clearform();
+
+
+
+  };
+
 
   const clearform = () => {
     setNotesImages([]);
@@ -132,19 +132,17 @@ const ImageUpload = () => {
     <div>
       <Box
         sx={{
-          minWidth: 300,
+          minWidth: 500,
           marginLeft: "auto",
           marginRight: "auto",
-          maxWidth: 480,
+          maxWidth: 700,
           backgroundColor: '#fafafa',
           borderRadius: "2vh",
           backgroundColor: 'white',
-          marginTop: "2rem",
           padding: "2rem",
           opacity: 0.8,
 
         }} >
-
         <Typography variant="h4" align="center" sx={{
           letterSpacing: 2,
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
@@ -153,29 +151,47 @@ const ImageUpload = () => {
           Upload Image
         </Typography>
         <form onSubmit={onFormSubmit}>
-          <TextField
-            label="Title"
-            required
-            value={notes_title}
-            fullWidth
-            margin="normal"
-            onChange={onNotesTitleChange}
-          />
-
-          <Button
-            variant="contained"
-            component="label"
-            sx={{ marginLeft: "19vh", marginTop: "1rem", borderRadius: "3vh" }}>
-            Browse Image
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              hidden
-              onChange={onNotesImageChange}
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <TextField
+              label="Title"
+              required
+              value={notes_title}
+              fullWidth
+              margin="normal"
+              onChange={onNotesTitleChange}
             />
-          </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ borderRadius: "1vh", height: "3rem", marginTop: "1.25rem", marginLeft: "1rem" }}
+              color="primary"
+            >
+              Submit
+            </Button>
 
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <Button
+              variant="contained"
+              component="label"
+              sx={{ marginTop: "1rem", borderRadius: "3vh" }}>
+              Browse Image
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                onChange={onNotesImageChange}
+              />
+            </Button>
+            <Button
+              variant="contained"
+              sx={{ borderRadius: "1vh", marginTop: "1rem" }}
+              onClick={clearform}
+            >
+              Clear
+            </Button>
+          </div>
 
           {preview && (
             <Box marginTop='2rem'>
@@ -188,32 +204,11 @@ const ImageUpload = () => {
                 />
               </Card>
             </Box>
-              )}
-              
-    
-        
+          )}
 
-          <Card sx={{ display: 'flex', justifyContent: 'space-between', marginTop: "3rem" }}>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ borderRadius: "3vh" }}
-              color="primary"
-            >
-              Submit
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ borderRadius: "3vh" }}
-              onClick={clearform}
-            >
-              Clear
-            </Button>
-          </Card>
         </form>
       </Box>
     </div>
-
   </div>
 };
 
