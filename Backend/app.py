@@ -64,10 +64,7 @@ def update_document():
 def google_login():
 
     #Setup Authentication Credentials for Google API access
-    creds = GoogleHelperFunctions.setupCredentials()
-
-    #Build Google Drive and Docs Services
-    driveService, docsService = GoogleHelperFunctions.buildServices(creds)
+    creds = GoogleHelperFunctions.setupServiceCredentials()
 
     #Instantiate the document object
     globals()['myDocument'] = Document.Document(GoogleHelperFunctions.DOCUMENT_ID, creds)

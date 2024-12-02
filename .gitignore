@@ -21,3 +21,4 @@ main.py
 package-lock.json
 package.json
 backend/documentText.txt
+backend/service_account_key.json

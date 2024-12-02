@@ -4,9 +4,12 @@ GoogleHelperFunctions.py:
 	Helper functions for using the Google API's
 """
 import os.path
-
+import sys
+import httplib2
+from apiclient import discovery
+from google.oauth2.service_account import Credentials
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
+#from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -14,7 +17,24 @@ from googleapiclient.errors import HttpError
 
 # The ID of a document.
 DOCUMENT_ID = "109zpwgU7kLhW5EeLEGcaunTgS0wwOLdufQINBhSqOSY"
+def setupServiceCredentials():
+	""" Description: 
+	Setup servic account authentication
 
+	:raises:
+	
+	:rtype:
+	:returns:
+	Service Account Authentication Credentials
+	"""
+
+	#Access scope used for user authentication
+	SCOPES = ["https://www.googleapis.com/auth/drive"]
+
+	creds = Credentials.from_service_account_file("service_account_key.json", scopes=SCOPES)   #User Credentials
+	
+	return creds
+'''
 def setupCredentials():
 	""" Description: 
 	Setup user authentication
@@ -48,7 +68,7 @@ def setupCredentials():
 			token.write(creds.to_json())
 	
 	return creds
-
+'''
 def buildServices(creds):
 	""" Description: 
 	Builds the API Services
