@@ -6,7 +6,7 @@ from GoogleAPI.src import GoogleHelperFunctions
 from GoogleAPI.src import Document
 
 app = Flask(__name__)#Flask application and  enabling cors
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, origins=["*"])
 
 myDocument = None   #Document Object
 creds = None    #Credentials for the Google Servers
