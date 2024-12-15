@@ -10,7 +10,7 @@ const Login = () => {
     const navigate_route = useNavigate();
     const onButtonClick = () => {
         console.log('function called');
-        axios.get("http://98.84.107.116:5000/google_login")
+        axios.get("http://34.203.200.31:5000/google_login")
 
             .then(response => {
                 

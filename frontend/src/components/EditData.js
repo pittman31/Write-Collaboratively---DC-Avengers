@@ -17,7 +17,7 @@ const EditData = () => {
     },[])
 
     const getDocument = () => {
-        axios.post("http://98.84.107.116:5000/get_document", {id})
+        axios.post("http://34.203.200.31:5000/get_document", {id})
         .then(response => {
             console.log('POST Request Response:', response);
             console.log('response data, status',response['data']['status'])
